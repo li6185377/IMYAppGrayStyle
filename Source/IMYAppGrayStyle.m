@@ -22,19 +22,19 @@
     return array;
 }
 
-+ (void)showInWindow:(UIWindow *)window {
-    for (UIView *subview in window.subviews) {
-        if ([subview isKindOfClass: IMYAppGrayStyleCoverView.class]) {
++ (void)showInMaskerView:(UIView *)maskerView {
+    for (UIView *subview in maskerView.subviews) {
+        if ([subview isKindOfClass:IMYAppGrayStyleCoverView.class]) {
             // 已有灰色蒙版，不再追加
             return;
         }
     }
-    IMYAppGrayStyleCoverView *coverView = [[self alloc] initWithFrame:window.bounds];
+    IMYAppGrayStyleCoverView *coverView = [[self alloc] initWithFrame:maskerView.bounds];
     coverView.userInteractionEnabled = NO;
     coverView.backgroundColor = [UIColor lightGrayColor];
     coverView.layer.compositingFilter = @"saturationBlendMode";
     coverView.layer.zPosition = FLT_MAX;
-    [window addSubview:coverView];
+    [maskerView addSubview:coverView];
     
     [self.allCoverViews addObject:coverView];
 }
@@ -59,7 +59,7 @@
     for (UIWindow *window in windows) {
         NSString *className = NSStringFromClass(window.class);
         if (![className containsString:@"UIText"]) {
-            [IMYAppGrayStyleCoverView showInWindow:window];
+            [IMYAppGrayStyleCoverView showInMaskerView:window];
         }
     }
 }
@@ -68,6 +68,18 @@
     NSAssert(NSThread.isMainThread, @"必须在主线程调用!");
     for (UIView *coverView in IMYAppGrayStyleCoverView.allCoverViews) {
         [coverView removeFromSuperview];
+    }
+}
+
++ (void)addToView:(UIView *)view {
+    [IMYAppGrayStyleCoverView showInMaskerView:view];
+}
+
++ (void)removeFromView:(UIView *)view {
+    for (UIView *subview in view.subviews) {
+        if ([subview isKindOfClass:IMYAppGrayStyleCoverView.class]) {
+            [subview removeFromSuperview];
+        }
     }
 }
 
