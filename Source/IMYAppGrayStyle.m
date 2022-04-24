@@ -23,12 +23,18 @@
 }
 
 + (void)showInMaskerView:(UIView *)maskerView {
+    if (!@available(iOS 13, *)) {
+        // iOS13 之前系统不支持
+        return;
+    }
+    
+    // 遍历是否已添加 gray cover view
     for (UIView *subview in maskerView.subviews) {
         if ([subview isKindOfClass:IMYAppGrayStyleCoverView.class]) {
-            // 已有灰色蒙版，不再追加
             return;
         }
     }
+    
     IMYAppGrayStyleCoverView *coverView = [[self alloc] initWithFrame:maskerView.bounds];
     coverView.userInteractionEnabled = NO;
     coverView.backgroundColor = [UIColor lightGrayColor];
